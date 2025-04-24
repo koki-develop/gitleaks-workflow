@@ -21,7 +21,7 @@ jobs:
       - name: List repositories
         id: list
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITLEAKS_PAT }}
         run: |
           REPOSITORIES=$(gh repo list \
             --limit 5 \
