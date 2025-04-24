@@ -29,6 +29,7 @@ jobs:
             --source \
             --json 'nameWithOwner' \
             --jq '. | map(.nameWithOwner)')
+          echo "$REPOSITORIES"
           echo "repositories=${REPOSITORIES}" >> "$GITHUB_OUTPUT"
 
   gitleaks:
