@@ -39,6 +39,7 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         repository: ${{ fromJSON(needs.list-repositories.outputs.repositories) }}
     steps:
