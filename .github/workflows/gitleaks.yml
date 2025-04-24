@@ -24,7 +24,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITLEAKS_PAT }}
         run: |
           REPOSITORIES=$(gh repo list \
-            --limit 5 \
+            --limit 1000 \
             --visibility public \
             --source \
             --json 'nameWithOwner' \
