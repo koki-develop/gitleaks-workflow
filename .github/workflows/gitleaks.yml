@@ -10,14 +10,40 @@ on:
   workflow_dispatch:
 
 jobs:
-  gitleaks:
+  list-repositories:
     timeout-minutes: 10
     permissions:
       contents: read
     runs-on: ubuntu-latest
+    outputs:
+      repositories: ${{ steps.list.outputs.repositories }}
+    steps:
+      - name: List repositories
+        id: list
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          REPOSITORIES=$(gh repo list \
+            --limit 5 \
+            --visibility public \
+            --source \
+            --json 'nameWithOwner' \
+            --jq '. | map(.nameWithOwner)')
+          echo "repositories=${REPOSITORIES}" >> "$GITHUB_OUTPUT"
+
+  gitleaks:
+    needs: list-repositories
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository: ${{ fromJSON(needs.list-repositories.outputs.repositories) }}
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
+          repository: ${{ matrix.repository }}
           fetch-depth: 0
           persist-credentials: false
       - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
